@@ -1243,14 +1243,21 @@
           title: doc.data().title
         }));
 
-        // const allItems = [...plans, ...events];
-        // allItems.sort((a, b) => convertTo24Hour(a.time).localeCompare(convertTo24Hour(b.time)));
-        console.log("📌 plans:", plans);
-        console.log("📌 events:", events);
-
         const allItems = [...plans, ...events];
-        console.log("📌 合併後 allItems:", allItems);
 
+        // 👉 新增 Now 點
+        const now = new Date();
+        const nowHour = now.getHours().toString().padStart(2, '0');
+        const nowMin = now.getMinutes().toString().padStart(2, '0');
+        const nowTime = `${nowHour}:${nowMin}`;
+
+        allItems.push({
+          time: nowTime,
+          title: 'Now',
+          isNow: true
+        });
+
+        // ⚠️ 安全檢查
         allItems.forEach((item, idx) => {
           if (!item || typeof item !== 'object') {
             console.warn(`⚠️ 第 ${idx} 筆是 null 或 undefined：`, item);
@@ -1266,60 +1273,6 @@
         console.error("載入每日時間線失敗：", error);
       }
     }
-
-    // function drawTimelinePoints(plansAndEvents) {
-    // const timelineBar = document.getElementById('timeline-bar');
-    // timelineBar.innerHTML = ''; // 清空
-
-    // const startHour = 6;
-    // const endHour = 22;
-    // const totalHours = endHour - startHour;
-
-    // plansAndEvents.forEach(item => {
-    //   const [hourStr, minStr] = convertTo24Hour(item.time).split(':');
-    //   const hour = parseInt(hourStr);
-    //   const minute = parseInt(minStr);
-
-    //   const posPercent = ((hour + minute / 60) - startHour) / totalHours * 100;
-
-    //   const container = document.createElement('div');
-    //   container.style.position = 'absolute';
-    //   container.style.left = `calc(${posPercent}% - 20px)`;
-    //   container.style.top = '0';
-    //   container.style.width = '40px';
-    //   container.style.textAlign = 'center';
-
-    //   // 時間標籤（上方）
-    //   const timeLabel = document.createElement('div');
-    //   timeLabel.textContent = item.time;
-    //   timeLabel.style.fontSize = '12px';
-    //   timeLabel.style.color = '#555';
-    //   timeLabel.style.marginBottom = '4px';
-
-    //   // 圓點
-    //   const point = document.createElement('div');
-    //   point.style.width = '16px';
-    //   point.style.height = '16px';
-    //   point.style.margin = '0 auto';
-    //   point.style.borderRadius = '50%';
-    //   point.style.backgroundColor = '#ff90b3';
-    //   point.style.boxShadow = '0 0 6px rgba(255, 144, 179, 0.7)';
-    //   point.title = item.title;
-
-    //   // 標題（下方）
-    //   const titleLabel = document.createElement('div');
-    //   titleLabel.textContent = item.title;
-    //   titleLabel.style.fontSize = '12px';
-    //   titleLabel.style.color = '#663399';
-    //   titleLabel.style.marginTop = '4px';
-    //   titleLabel.style.whiteSpace = 'nowrap';
-
-    //   container.appendChild(timeLabel);
-    //   container.appendChild(point);
-    //   container.appendChild(titleLabel);
-    //   timelineBar.appendChild(container);
-    // });
-    // }
 
     function drawTimelinePoints(items) {
       const timelineBar = document.getElementById("timeline-bar");
@@ -1339,6 +1292,13 @@
         const titleLabel = document.createElement("div");
         titleLabel.className = "title";
         titleLabel.textContent = item.title;
+
+        // 👉 標記 Now 點（樣式不同）
+        if (item.isNow) {
+          point.classList.add("now-point");
+          dot.style.backgroundColor = "#FF9494"; // 粉紅色
+          dot.style.border = "2px solid white";
+        }
 
         point.appendChild(timeLabel);
         point.appendChild(dot);
