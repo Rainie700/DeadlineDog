@@ -332,6 +332,11 @@
       margin: 0 20px;
       z-index: 2;
       /* 確保點在線上方 */
+
+      /* 新增 */
+      justify-content: center;
+      text-align: center;
+      width: 80px;
     }
 
     /* 點本體 */
@@ -363,9 +368,49 @@
       margin-top: 8px;
       white-space: nowrap;
     }
+    .now-point {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 20px;
+      z-index: 2;
+      /* 確保點在線上方 */
+
+      /* 新增 */
+      justify-content: center;
+      text-align: center;
+      width: 80px;
+    }
+
+    /* 點本體 */
     .now-point .dot {
-      background-color: #d4c1c6;
-      border: 2px solid #d4c1c6;
+      width: 14px;
+      height: 14px;
+      background-color: #7f7f7f;
+      border-radius: 50%;
+      border: 2px solid white;
+
+      position: relative;
+      top: 0;
+
+      z-index: 3;
+    }
+
+    /* 時間標籤，點的上方 */
+    .now-point .time {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+      user-select: none;
+    }
+
+    /* 標題，點的下方 */
+    .now-point .title {
+      font-size: 12px;
+      color: #555;
+      margin-top: 8px;
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -488,212 +533,6 @@
   </main>
 
   <script>
-    // //Event----------------------------------------------------------------------------------------
-    // document.addEventListener("DOMContentLoaded", function () {
-    //   loadCountdown();
-    //   loadHomeNotes();
-    // });
-
-    // // ✅ 載入倒數計時
-    // function loadCountdown() {
-    //   let events = JSON.parse(localStorage.getItem("events")) || [];
-    //   const countdownEl = document.getElementById("countdown");
-    //   const countdownTitle = document.getElementById("countdown-title");
-
-    //   // ✅ 過濾掉已過期的事件
-    //   const now = new Date();
-    //   events = events.filter(event => {
-    //     const eventDate = new Date(event.date + "T" + event.time);
-    //     return eventDate > now;
-    //   });
-
-    //   // ✅ 更新 localStorage
-    //   localStorage.setItem("events", JSON.stringify(events));
-
-    //   renderTodaySchedule?.();
-
-    //   // ✅ 沒有事件時處理
-    //   if (events.length === 0) {
-    //     countdownTitle.innerText = "No events yet!";
-    //     countdownEl.innerHTML = "";
-    //     return;
-    //   }
-
-    //   // ✅ 找出最近的事件
-    //   const nearestEvent = findNearestEvent(events);
-
-    //   if (!nearestEvent) {
-    //     countdownTitle.innerText = "No upcoming events!";
-    //     countdownEl.innerHTML = "";
-    //     return;
-    //   }
-
-    //   // ✅ 顯示正在倒數的事件名稱
-    //   countdownTitle.innerText = nearestEvent.title;
-
-    //   // ✅ 啟動倒數
-    //   startCountdown(nearestEvent);
-    // }
-
-
-    // // ✅ 找出最近的事件
-    // function findNearestEvent(events) {
-    //   let now = new Date();
-    //   let nearest = null;
-    //   let nearestTime = Infinity;
-
-    //   events.forEach(event => {
-    //     let eventDate = new Date(event.date + "T" + event.time);
-    //     let diff = eventDate - now;
-
-    //     if (diff > 0 && diff < nearestTime) {
-    //       nearest = event;
-    //       nearestTime = diff;
-    //     }
-    //   });
-
-    //   return nearest;
-    // }
-
-    // // ✅ 開始倒數
-    // function startCountdown(event) {
-    //   const countdownEl = document.getElementById("countdown");
-    //   document.getElementById("countdown-title").innerText = "NEXT:   " + event.title;
-
-
-    //   function updateCountdown() {
-    //     let now = new Date();
-    //     let eventDate = new Date(event.date + "T" + event.time);
-    //     let diff = eventDate - now;
-
-    //     if (diff <= 0) {
-    //       countdownEl.innerText = `${event.title} is happening now!`;
-    //       clearInterval(timer);
-    //       return;
-    //     }
-
-    //     let days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    //     let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    //     let minutes = Math.floor((diff / (1000 * 60)) % 60);
-    //     let seconds = Math.floor((diff / 1000) % 60);
-
-    //     document.getElementById("days").innerText = String(days).padStart(2, '0');
-    //     document.getElementById("hours").innerText = String(hours).padStart(2, '0');
-    //     document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
-
-    //     if (diff <= 0) {
-    //       document.querySelector(".countdown-box").innerHTML = `<p style="text-align:center;">${event.title} is happening now!</p>`;
-    //       clearInterval(timer);
-    //       return;
-    //     }
-
-    //   }
-
-    //   updateCountdown();
-    //   let timer = setInterval(updateCountdown, 1000);
-    // }
-    //     //Note----------------------------------------------------------------------------------------------------
-    //     //✅ 載入 notes 清單到首頁
-    //     document.addEventListener("DOMContentLoaded", function () {
-    //       loadHomeNotes();
-    //     });
-
-
-    //     // ❌ 完成後就從 localStorage 移除（而不是改 done）
-    //     function loadHomeNotes() {
-    //       console.log("載入中...");
-
-    //       let notes = JSON.parse(localStorage.getItem("notes")) || [];
-
-    //       // 過濾未完成 + 排序
-    //       let activeNotes = notes
-    //         .filter(note => !note.done)
-    //         .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    //       const homeList = document.getElementById('home-note-list');
-    //       homeList.innerHTML = "";
-
-    //       // 如果沒有未完成的筆記，顯示 All done!
-    //       if (activeNotes.length === 0) {
-    //         const li = document.createElement('li');
-    //         li.innerHTML = `<em style="color: #aaa;">All done! 🎉</em>`;
-    //         li.style.textAlign = "center";
-    //         li.style.padding = "8px";
-    //         homeList.appendChild(li);
-    //         return; // 不繼續往下執行
-    //       }
-
-    //       // 最多顯示前三項
-    //       let notesToShow = activeNotes.slice(0, 3);
-
-    //       notesToShow.forEach(note => {
-    //         const li = document.createElement('li');
-    //         li.className = 'note-item';
-    //         li.style.position = "relative";
-    //         li.style.cursor = "pointer";
-
-    //         li.innerHTML = `
-    //   <strong>${note.title}</strong><br>
-    //   <small style="color: #777;">Deadline：${note.date}</small>
-    //   <button class="done-btn" onclick="event.stopPropagation(); markNoteDone(${note.id})" style="
-    //     position: absolute;
-    //     top: 10px;
-    //     right: 10px;
-    //     background: #f7cdd0;
-    //     border: none;
-    //     font-size: 14px;
-    //     cursor: pointer;
-    //     color: white;
-    //     border-radius:8px;
-    //     padding:8px 12px;
-    //   ">Done</button>
-    // `;
-
-
-    //         // 點按鈕時標記完成並阻止事件冒泡（避免跳轉）
-    //         li.querySelector(".done-btn").addEventListener("click", (event) => {
-    //           event.stopPropagation();
-    //           markNoteDone(note.title);
-    //         });
-
-    //         // 點整個 li 跳轉
-    //         li.addEventListener("click", () => {
-    //           window.location.href = "note.html";
-    //         });
-
-    //         homeList.appendChild(li);
-    //       });
-
-    //       // 超過三項，顯示 +n more
-    //       if (activeNotes.length > 3) {
-    //         const extra = document.createElement('li');
-    //         extra.className = 'note-extra-count';
-    //         extra.innerHTML = `<small>+${activeNotes.length - 3} more</small>`;
-    //         extra.style.textAlign = "right";
-    //         extra.style.color = "#999";
-    //         homeList.appendChild(extra);
-    //       }
-    //     }
-
-    //     function markNoteDone(id) {
-    //       let notes = JSON.parse(localStorage.getItem("notes")) || [];
-
-    //       // 找到符合 id 的那筆筆記，把 done 設為 true
-    //       notes = notes.map(note => {
-    //         if (note.id === id) {
-    //           return { ...note, done: true };
-    //         }
-    //         return note;
-    //       });
-
-    //       localStorage.setItem("notes", JSON.stringify(notes));
-    //       loadHomeNotes(); // ✅ 更新畫面
-    //       renderTodaySchedule?.();
-    //     }
-    //     console.log("script 正常執行");
-
-
-
     //mood------------------------------------------------------------------------------------
     // 顯示現在時間，並每秒更新
     function updateTime() {
@@ -716,113 +555,6 @@
 
     setInterval(updateTime, 1000);
     updateTime();
-
-    // // 點擊心情儲存
-    // document.getElementById('mood-options').addEventListener('click', e => {
-    //   if (e.target.dataset.mood) {
-    //     const mood = e.target.dataset.mood;
-    //     const now = new Date().toISOString();
-
-    //     // 取得現有紀錄
-    //     let moods = JSON.parse(localStorage.getItem('moods')) || [];
-    //     moods.push({ mood, time: now });
-    //     localStorage.setItem('moods', JSON.stringify(moods));
-
-    //     alert(`你選擇了心情：${mood}`);
-    //   }
-    // });
-
-    // // 歷史紀錄按鈕
-    // document.getElementById('show-history').addEventListener('click', () => {
-    //   window.location.href = "mood.html";
-    // });
-
-    //calendar__________________________________________________________________________
-    // document.addEventListener("DOMContentLoaded", function () {
-    //   renderMiniCalendar();
-    //   renderTodaySchedule();
-    // });
-
-    // function renderMiniCalendar() {
-    //   const calendarEl = document.getElementById("calendar-preview");
-    //   const now = new Date();
-    //   const year = now.getFullYear();
-    //   const month = now.getMonth();
-    //   const todayDate = now.getDate();
-
-    //   const firstDay = new Date(year, month, 1).getDay(); // 月初是星期幾
-    //   const daysInMonth = new Date(year, month + 1, 0).getDate(); // 當月天數
-
-    //   calendarEl.innerHTML = "";
-
-    //   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    //   weekdays.forEach(day => {
-    //     const div = document.createElement("div");
-    //     div.textContent = day;
-    //     div.style.fontWeight = "bold";
-    //     calendarEl.appendChild(div);
-    //   });
-
-    //   // 空格
-    //   for (let i = 0; i < firstDay; i++) {
-    //     calendarEl.appendChild(document.createElement("div"));
-    //   }
-
-    //   // 日期
-    //   for (let i = 1; i <= daysInMonth; i++) {
-    //     const div = document.createElement("div");
-    //     div.textContent = i;
-    //     div.className = "day";
-    //     if (i === todayDate) {
-    //       div.classList.add("today");
-    //     }
-    //     calendarEl.appendChild(div);
-    //   }
-    // }
-
-    // function renderTodaySchedule() {
-    //   const taskEl = document.getElementById("today-task");
-    //   const todayStr = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
-
-    //   const notes = JSON.parse(localStorage.getItem("notes")) || [];
-    //   const events = JSON.parse(localStorage.getItem("events")) || [];
-
-    //   // 找出今天的筆記與行程
-    //   const todayNotes = notes.filter(n => n.date === todayStr && !n.done);
-    //   const todayEvents = events.filter(e => e.date === todayStr);
-
-    //   const combined = [...todayNotes, ...todayEvents];
-
-    //   if (combined.length === 0) {
-    //     taskEl.textContent = "No tasks today 🎉";
-    //     return;
-    //   }
-
-    //   // 排序（先有 time 再無 time）
-    //   combined.sort((a, b) => {
-    //     if (a.time && b.time) return a.time.localeCompare(b.time);
-    //     if (a.time) return -1;
-    //     if (b.time) return 1;
-    //     return 0;
-    //   });
-
-    //   // 顯示一筆，+n
-    //   const main = combined[0];
-    //   // let html = main.time ? `${main.time} - ${main.title}` : main.title;
-
-    //   // if (combined.length > 1) {
-    //   //   html += ` <span style="color:#999; font-size:12px;">+${combined.length - 1}</span>`;
-    //   // }
-
-    //   const html = `
-    //   <div style="position: relative; text-align: center;">
-    //     <span>${main.time ? `${main.time} - ${main.title}` : main.title}</span>
-    //     ${combined.length > 1 ? `<span style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); color:#999; font-size:12px;">+${combined.length - 1}</span>` : ""}
-    //   </div>
-    // `;
-
-    //   taskEl.innerHTML = html;
-    // }
 
   </script>
 
@@ -1167,56 +899,6 @@
       window.location.href = "mood.html";
     });
     //Timeline_______________________________________________________________________
-
-    // const timeline = document.getElementById("timeline");
-
-    // auth.onAuthStateChanged(async user => {
-    //   if (!user) {
-    //     timeline.innerHTML = "<p style='color:#999;'>請先登入以查看行程</p>";
-    //     return;
-    //   }
-
-    //   const todayStr = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
-
-    //   // 抓今日的 daily plan
-    //   const planDocRef = doc(db, "dailyPlans", user.uid, "plans", todayStr);
-    //   const planSnap = await getDoc(planDocRef);
-
-    //   let items = [];
-
-    //   if (planSnap.exists()) {
-    //     items = planSnap.data().items || [];
-    //   }
-
-    //   // 加入今日的 event（假設你有用 "events/{uid}/userEvents"）
-    //   const eventSnapshot = await getDocs(collection(db, "events", user.uid, "userEvents"));
-    //   const today = new Date();
-    //   eventSnapshot.forEach(doc => {
-    //     const data = doc.data();
-    //     const eventDate = new Date(data.date); // 假設 date 是 timestamp
-    //     if (eventDate.toDateString() === today.toDateString()) {
-    //       items.push({ title: data.title, time: data.time }); // 假設有 time 欄位
-    //     }
-    //   });
-
-    //   // 按時間排序
-    //   items.sort((a, b) => a.time.localeCompare(b.time));
-
-    //   // 顯示在 timeline 裡
-    //   timeline.innerHTML = "";
-    //   items.forEach(item => {
-    //     const block = document.createElement("div");
-    //     block.style = "min-width: 120px; margin-right: 10px; padding: 10px; background: #ffe5f2; border-radius: 10px; text-align: center;";
-    //     block.innerHTML = `<strong>${item.time}</strong><br>${item.title}`;
-    //     timeline.appendChild(block);
-    //   });
-
-    //   if (items.length === 0) {
-    //     timeline.innerHTML = "<p style='color:#999;'>尚未規劃今日行程</p>";
-    //   }
-    // });
-
-
     onAuthStateChanged(auth, (user) => {
       if (user) {
         loadTodayTimeline(user);
@@ -1300,7 +982,7 @@
         // 👉 標記 Now 點（樣式不同）
         if (item.isNow) {
           point.classList.add("now-point");
-          dot.style.backgroundColor = "#FF9494"; // 粉紅色
+          dot.style.backgroundColor = "#d581a1"; // 粉紅色
           dot.style.border = "2px solid white";
         }
 
