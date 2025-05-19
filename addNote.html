@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Add Note - DeadlineDog</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: '微軟正黑體', sans-serif;
+            background-color: #fff7f0;
+        }
+
+        header {
+            background-color: #ffd6e7;
+            padding: 20px;
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #5a3e36;
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 16px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #ffd6e7;
+            border-radius: 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+
+        .submit-btn {
+            background-color: #ff8aa1;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #ff6985;
+        }
+
+        /* home */
+        .top-bar {
+            text-align: right;
+            padding: 10px 20px;
+            background-color: #ffd6e7;
+            /* 根據頁面樣式調整背景色 */
+            color: #ffd6e7;
+        }
+
+        .top-bar a {
+            color: #5a3e36;
+            margin-left: 15px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .top-bar a:hover {
+            text-decoration: underline;
+        }
+
+        /* Note 刪除按鈕 */
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #ff4d4d;
+        }
+
+        .delete-btn:hover {
+            color: #ff1a1a;
+        }
+
+        /* 讓 note-card 支援絕對定位 */
+        .note-card {
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        Add Note
+        <nav class="top-bar">
+            <a href="note.html">Back</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- <div class="welcome">Welcome back!</div> -->
+
+        <form id="add-note-form">
+            <label for="title">任務名稱：</label>
+            <input type="text" id="title" name="title" required />
+
+            <label for="date">截止日期：</label>
+            <input type="date" id="date" name="date" required />
+
+            <button type="submit" class="submit-btn">新增任務</button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase-init.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        let currentUser = null;
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                alert("請先登入");
+                window.location.href = "login.html";
+                return;
+            }
+            currentUser = user;
+        });
+
+        document.getElementById('add-note-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!currentUser) return;
+
+            const title = document.getElementById('title').value.trim();
+            const date = document.getElementById('date').value;
+
+            if (!title || !date) {
+                alert("請填寫完整資料");
+                return;
+            }
+
+            try {
+                const notesRef = collection(db, "notes", currentUser.uid, "userNotes");
+                await addDoc(notesRef, {
+                    title,
+                    date,
+                    done: false,
+                    id: Date.now(),
+                });
+
+                alert("新增成功！");
+                window.location.href = "note.html";
+            } catch (error) {
+                alert("新增失敗：" + error.message);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
+
+
+
+</html>

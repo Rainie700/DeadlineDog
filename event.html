@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Event - DeadlineDog</title>
+    <style>
+        /* 主要內容區 */
+        main {
+            padding: 20px;
+            /* background-color: #f9e6ec; */
+            background-color: #ffffff;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        section {
+            margin-bottom: 20px;
+        }
+
+        body {
+            margin: 0;
+            font-family: '微軟正黑體', sans-serif;
+            /* background-color: #fff7f0; */
+            background-color: #f9e6ec;
+        }
+
+        header {
+            /* background-color: #ffd6e7; */
+            background-color: #f2d4dc;
+            padding: 20px;
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #5a3e36;
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .welcome {
+            font-size: 24px;
+            margin-bottom: 20px;
+            margin-left: 20px;
+            /* 為按鈕添加左邊距離，調整間距 */
+            color: #333;
+        }
+
+        .add-event-btn {
+            display: inline-block;
+            background-color: #ff8aa1;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 18px;
+            margin-bottom: 30px;
+            margin-left: 20px;
+            /* 為按鈕添加左邊距離，調整間距 */
+            transition: background-color 0.3s;
+        }
+
+        .add-event-btn:hover {
+            background-color: #ff6985;
+        }
+
+        .event-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            min-height: 500px;
+            /* 設定區塊最小高度，根據需要調整數值 */
+        }
+
+        .event-card {
+            background-color: #ffeef4;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .event-deadline {
+            font-size: 14px;
+            color: #777;
+        }
+
+        /* home */
+        .top-bar {
+            text-align: right;
+            padding: 10px 20px;
+            background-color: #f2d4dc;
+            /* 根據頁面樣式調整背景色 */
+            color: #5a3e36;
+        }
+
+        .top-bar a {
+            color: #5a3e36;
+            margin-left: 15px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .top-bar a:hover {
+            text-decoration: underline;
+        }
+
+        /* ____test_____ */
+        #test-section {
+            /* background-color: #f9e6ec; */
+            background-color: #f9e6ec;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            min-height: 300px;
+            /* height: 300px; */
+        }
+
+        #test-section h2 {
+            color: #545353;
+        }
+
+        #meeting-section {
+            /* background-color: #f9e6ec; */
+            background-color: #f9e6ec;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            min-height: 300px;
+        }
+
+        #meeting-section h2 {
+            color: #545353;
+        }
+
+        #class-section {
+            /* background-color: #f9e6ec; */
+            background-color: #f9e6ec;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            min-height: 300px;
+        }
+
+        #class-section h2 {
+            color: #545353;
+        }
+
+        #project-section {
+            /* background-color: #f9e6ec; */
+            background-color: #f9e6ec;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            min-height: 300px;
+        }
+
+        #project-section h2 {
+            color: #545353;
+        }
+
+        .event-item {
+            background-color: #ffe0f0;
+            border: 2px solid #ff99cc;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 15px;
+            font-size: 18px;
+        }
+
+        /* ///////////////////////////////////// */
+
+        .event-box {
+            background-color: #fef6f9;
+            /* 粉米色背景 */
+            border: 2px solid #e3a8c1;
+            /* 粉紫邊框 */
+            border-radius: 12px;
+            /* 圓角 */
+            padding: 10px 15px;
+            margin: 10px 0;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            font-family: "Helvetica", sans-serif;
+            transition: transform 0.2s ease;
+        }
+
+        .event-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .event-box strong {
+            font-size: 1.1em;
+            color: #a03c7e;
+        }
+
+        .event-box .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background-color: transparent;
+            border: none;
+            font-size: 16px;
+            color: #c43b3b;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        Event
+        <nav class="top-bar">
+            <a href="index.html">Home</a>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2> </h2>
+            <div class="event-container">
+                <div class="welcome">Welcome back!</div>
+                <a href="addEvent.html" class="add-event-btn">➕ Add Event</a>
+        </section>
+
+        <h2 id="testt">📝 Test</h2>
+        <section id="test-section">
+            <!-- <h2>📝 Test</h2> -->
+            <div id="test-list" class="event-list"></div>
+        </section>
+        <h2 id="meetingg">📅 Meeting</h2>
+        <section id="meeting-section">
+            <!-- <h2>📅 Meeting</h2> -->
+            <div id="meeting-list" class="event-list"></div>
+        </section>
+        <h2 id="classs">📂 Class</h2>
+        <section id="class-section">
+            <!-- <h2>📂 Class</h2> -->
+            <div id="class-list" class="event-list"></div>
+        </section>
+        <h2 id="projectt">🎓 Project</h2>
+        <section id="project-section">
+            <!-- <h2>🎓 Project</h2> -->
+            <div id="project-list" class="event-list"></div>
+        </section>
+
+
+    </main>
+
+    <!-- <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            loadEvents();
+        });
+
+        function loadEvents() {
+            let events = JSON.parse(localStorage.getItem("events")) || [];
+
+            // 先把所有區塊清空
+            document.querySelectorAll(".event-list").forEach(list => list.innerHTML = "");
+
+            events.forEach((event, index) => {
+                addEventToPage(event, index);
+            });
+        }
+
+        function addEventToPage(event, index) {
+            let sectionId = "";
+            switch (event.category) {
+                case "test":
+                    sectionId = "test-list";
+                    break;
+                case "meeting":
+                    sectionId = "meeting-list";
+                    break;
+                case "class":
+                    sectionId = "class-list";
+                    break;
+                case "project":
+                    sectionId = "project-list";
+                    break;
+                default:
+                    return;
+            }
+
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const eventItem = document.createElement("div");
+                eventItem.className = "event-item";
+                eventItem.innerHTML = `
+        <strong>${event.title}</strong>: ${event.date} ${event.time}
+        <button onclick="deleteEvent(${index})">❌</button>
+      `;
+                section.appendChild(eventItem);
+            }
+        }
+
+        function deleteEvent(index) {
+            let events = JSON.parse(localStorage.getItem("events")) || [];
+            events.splice(index, 1);
+            localStorage.setItem("events", JSON.stringify(events));
+            loadEvents();  // 重新載入
+        }
+    </script> -->
+
+    <script type="module">
+        import { auth, db } from './firebase-init.js';
+        import {
+            collection,
+            getDocs,
+            deleteDoc,
+            doc
+        } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+        const categoryMap = {
+            Test: "test-section",
+            Meeting: "meeting-section",
+            Class: "class-section",
+            Project: "project-section"
+        };
+
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                alert("請先登入！");
+                window.location.href = "login.html";
+                return;
+            }
+
+            const userEventsRef = collection(db, "events", user.uid, "userEvents");
+            const querySnapshot = await getDocs(userEventsRef);
+
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const eventId = docSnap.id;
+
+                const sectionId = categoryMap[data.category];
+                const section = document.getElementById(sectionId);
+
+                if (section) {
+                    const eventDiv = document.createElement("div");
+                    eventDiv.classList.add("event-box");
+                    eventDiv.innerHTML = `
+          <strong>${data.title}</strong><br/>
+          ${data.date} ${data.time}
+          <button class="delete-btn" data-id="${eventId}">X</button>
+        `;
+                    // section.appendChild(eventDiv);
+                    section.prepend(eventDiv);
+                }
+            });
+
+            // 刪除事件
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const eventId = e.target.getAttribute('data-id');
+                    if (confirm("確定要刪除這個事件？")) {
+                        await deleteDoc(doc(db, "events", user.uid, "userEvents", eventId));
+                        location.reload();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

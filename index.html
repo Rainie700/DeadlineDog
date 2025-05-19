@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeadlineDog</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      /* background-color: #f9e6ec; */
+      background-color: #f3e5e8;
+      color: #333;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 30px;
+      /* background-color: #f2d4dc; */
+      background-color: #f3e5e8;
+    }
+
+    header .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #c06c84;
+    }
+
+    header .nav-buttons button {
+      margin-left: 10px;
+      padding: 8px 16px;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    main {
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      min-width: 250px;
+      cursor: pointer;
+    }
+
+    .calendar {
+      flex: 2;
+      text-align: center;
+    }
+
+    .note-list,
+    .friend-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .note-item,
+    .friend-item {
+      background: #fce4ec;
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 15px;
+    }
+
+    .mood-options span {
+      font-size: 24px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    /* ____________button_____________ */
+    .button-container {
+      display: flex;
+      flex-wrap: wrap;
+      /* 允許換行 */
+      justify-content: center;
+      /* 水平置中*/
+      gap: 10px;
+      /* 按鈕之間間距 */
+      margin-top: 20px;
+    }
+
+    .button-container button {
+      width: 45%;
+      /* 每個按鈕佔約一半（加 gap 剛剛好） */
+      min-width: 120px;
+      /* 避免太小 */
+      padding: 10px;
+      border: none;
+      background-color: #f6e5ec;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .button-container button:hover {
+      /* 滑鼠懸停時顏色 */
+      background-color: #e6c5c7;
+    }
+
+    .button-container a {
+      color: #545353;
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      height: 100%;
+      font-weight: bold;
+    }
+
+    .button-container a:hover {
+      text-decoration: none;
+    }
+
+    /* ________________button end______________ */
+    .logo-image {
+      height: 60px;
+      /* 控制圖片高度 */
+    }
+
+    /* _________________timer___________________ */
+    .countdown-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .countdown-segment {
+      background-color: #fff;
+      border: 2px solid #d8b5c3;
+      border-radius: 10px;
+      width: 60px;
+      height: 60px;
+      text-align: center;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .countdown-segment p {
+      font-size: 12px;
+      margin: 2px 0 0 0;
+      color: #888;
+    }
+
+    .colon {
+      font-size: 24px;
+      font-weight: bold;
+      color: #a78a8a;
+      align-self: center;
+    }
+
+    /* _____________end of timer_________________ */
+
+    #countdown-title {
+      color: #c27ba0;
+      /* font-weight: bold; */
+      font-size: 16px;
+    }
+
+    .view-note-btn {
+      font-size: 12px;
+      padding: 4px 8px;
+      background-color: #f2f2f2;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #555;
+      transition: all 0.2s;
+    }
+
+    .view-note-btn:hover {
+      background-color: #e0d4f7;
+      color: #663399;
+    }
+
+    .done-btn:hover {
+      background: #ff1a1a;
+      color: white;
+    }
+
+    /* mood__________________________________ */
+    #date-time {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f3e5e8;
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      margin-bottom: 16px;
+      font-family: 'Quicksand', 'Noto Sans TC', sans-serif;
+    }
+
+    .date-left {
+      color: #f3e5e8;
+    }
+
+    .date-string {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    .weekday {
+      font-size: 0.9rem;
+      margin-top: 2px;
+    }
+
+    .time-right {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #444;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      /* 允許換行 */
+      gap: 20px;
+      /* 區塊之間間距（可選） */
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      flex: 1 1 200px;
+      /* 縮放 初始寬度 200px */
+      min-width: 200px;
+      cursor: pointer;
+    }
+
+    .timeline-container {
+      /* 換行 */
+      flex-basis: 100%;
+    }
+
+    /* calendar______________________________________________________ */
+    .today-overview {
+      background: #fff6f8;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      margin-bottom: 17px;
+    }
+
+    .calendar-preview {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .calendar-preview .day {
+      padding: 6px 0;
+      border-radius: 50%;
+      color: #999;
+    }
+
+    .calendar-preview .today {
+      background-color: #fbb1d4;
+      color: white;
+      font-weight: bold;
+    }
+
+    .today-schedule {
+      font-size: 14px;
+      color: #444;
+    }
+
+    .task-item {
+      margin-top: 6px;
+      font-size: 13px;
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      color: #555;
+      border: 1px solid #eee;
+    }
+
+    #timeline-bar {
+      position: relative;
+      height: 80px;
+      /* 適當高度 */
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      padding: 0 20px;
+    }
+
+    /* 這條線用一個偽元素或子元素做 */
+    #timeline-bar::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #ccc;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+
+    /* 每個點容器 */
+    .timeline-point {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 20px;
+      z-index: 2;
+      /* 確保點在線上方 */
+    }
+
+    /* 點本體 */
+    .timeline-point .dot {
+      width: 14px;
+      height: 14px;
+      background-color: #e6c5c7;
+      border-radius: 50%;
+      border: 2px solid white;
+      
+      position: relative;
+      top: 0;
+      
+      z-index: 3;
+    }
+
+    /* 時間標籤，點的上方 */
+    .timeline-point .time {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+      user-select: none;
+    }
+
+    /* 標題，點的下方 */
+    .timeline-point .title {
+      font-size: 12px;
+      color: #555;
+      margin-top: 8px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">
+      <img src="logo.png" alt="DeadlineDog" class="logo-image">
+    </div>
+    <div class="nav-buttons">
+      <button onclick="window.location.href='login.html'">Log in</button>
+      <button onclick="window.location.href='signup.html'">Sign up</button>
+    </div>
+  </header>
+  <!-- _______________event__________________ -->
+  <main>
+    <div class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="padding-top: 3px;">Event</h3>
+        <button onclick="window.location.href='event.html'" class="view-note-btn">
+          ➕ Add / View
+        </button>
+      </div>
+      <div style="font-weight: bold;"><span id="countdown-title">Upcoming Event Countdown</span></div>
+      <div class="countdown-box">
+        <div class="countdown-segment">
+          <span id="days">00</span>
+          <p>days</p>
+        </div>
+        <div class="colon">:</div>
+        <div class="countdown-segment">
+          <span id="hours">00</span>
+          <p>hours</p>
+        </div>
+        <div class="colon">:</div>
+        <div class="countdown-segment">
+          <span id="minutes">00</span>
+          <p>minutes</p>
+        </div>
+      </div>
+
+      <div class="button-container">
+        <button><a href="event.html#testt">Test</a></button>
+        <button><a href="event.html#meetingg">Meeting</a></button>
+        <button><a href="event.html#classs">Class</a></button>
+        <button><a href="event.html#projectt">Project</a></button>
+      </div>
+    </div>
+    <!-- _______________note__________________ -->
+    <div class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="padding-top: 3px;">Note</h3>
+        <button onclick="window.location.href='note.html'" class="view-note-btn">
+          ➕ Add / View
+        </button>
+      </div>
+      <ul class="note-list" id="home-note-list">
+        <!-- JS 會自動填 -->
+      </ul>
+    </div>
+    <!-- _______________calendar__________________ -->
+    <div class="section calendar">
+      <div class="today-overview">
+        <div class="calendar-preview" id="calendar-preview"></div>
+      </div>
+      <div class="today-schedule">
+        <strong>Today's Schedule</strong>
+        <div id="today-task" class="task-item">Loading...</div>
+      </div>
+    </div>
+
+    <!-- _______________mood__________________ -->
+    <div class="section">
+      <!-- 🕒 上半部 日期時間 -->
+      <div id="date-time"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; margin-top: 15px;">
+        <div>
+          <div id="date" style="font-size: 1rem; font-weight: bold; color: #c06c84;"></div>
+          <div id="weekday" style="font-size: 0.9rem;  color: #c06c84"></div>
+        </div>
+        <div id="time" style="font-size: 1.6rem; font-weight: bold; color: #c06c84"></div>
+      </div>
+
+      <!-- 😊 下半部 心情選擇 -->
+      <div style="text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 25px; margin-top: 30px;">
+        How's your day?</div>
+      <div id="mood-options" style="display: flex; justify-content: space-around; font-size: 2rem; cursor: pointer;">
+        <div data-mood="😄" title="Happy">😄</div>
+        <div data-mood="🙂" title="Okay">🙂</div>
+        <div data-mood="😐" title="So-so">😐</div>
+        <div data-mood="😔" title="Sad">😔</div>
+        <div data-mood="😡" title="Angry">😡</div>
+      </div>
+
+      <button id="show-history"
+        style="margin-top: 35px; float: right; background: #e6c5c7; color: white; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer;">History</button>
+    </div>
+    <!-- _______________timeline__________________ -->
+    <div id="timeline" class="section move-next-line" style="min-width: 600px; position: relative;">
+      <h3>Today's Timeline</h3>
+      <button id="add-plan-btn" style="
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #e6c5c7;
+      color: white;
+      padding: 6px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+    " onclick="window.location.href='addPlan.html'">
+        ＋ Add Plan
+      </button>
+      <div id="timeline-bar" style="display: flex; overflow-x: auto; padding-top: 10px;"></div>
+    </div>
+
+
+  </main>
+
+  <script>
+    // //Event----------------------------------------------------------------------------------------
+    // document.addEventListener("DOMContentLoaded", function () {
+    //   loadCountdown();
+    //   loadHomeNotes();
+    // });
+
+    // // ✅ 載入倒數計時
+    // function loadCountdown() {
+    //   let events = JSON.parse(localStorage.getItem("events")) || [];
+    //   const countdownEl = document.getElementById("countdown");
+    //   const countdownTitle = document.getElementById("countdown-title");
+
+    //   // ✅ 過濾掉已過期的事件
+    //   const now = new Date();
+    //   events = events.filter(event => {
+    //     const eventDate = new Date(event.date + "T" + event.time);
+    //     return eventDate > now;
+    //   });
+
+    //   // ✅ 更新 localStorage
+    //   localStorage.setItem("events", JSON.stringify(events));
+
+    //   renderTodaySchedule?.();
+
+    //   // ✅ 沒有事件時處理
+    //   if (events.length === 0) {
+    //     countdownTitle.innerText = "No events yet!";
+    //     countdownEl.innerHTML = "";
+    //     return;
+    //   }
+
+    //   // ✅ 找出最近的事件
+    //   const nearestEvent = findNearestEvent(events);
+
+    //   if (!nearestEvent) {
+    //     countdownTitle.innerText = "No upcoming events!";
+    //     countdownEl.innerHTML = "";
+    //     return;
+    //   }
+
+    //   // ✅ 顯示正在倒數的事件名稱
+    //   countdownTitle.innerText = nearestEvent.title;
+
+    //   // ✅ 啟動倒數
+    //   startCountdown(nearestEvent);
+    // }
+
+
+    // // ✅ 找出最近的事件
+    // function findNearestEvent(events) {
+    //   let now = new Date();
+    //   let nearest = null;
+    //   let nearestTime = Infinity;
+
+    //   events.forEach(event => {
+    //     let eventDate = new Date(event.date + "T" + event.time);
+    //     let diff = eventDate - now;
+
+    //     if (diff > 0 && diff < nearestTime) {
+    //       nearest = event;
+    //       nearestTime = diff;
+    //     }
+    //   });
+
+    //   return nearest;
+    // }
+
+    // // ✅ 開始倒數
+    // function startCountdown(event) {
+    //   const countdownEl = document.getElementById("countdown");
+    //   document.getElementById("countdown-title").innerText = "NEXT:   " + event.title;
+
+
+    //   function updateCountdown() {
+    //     let now = new Date();
+    //     let eventDate = new Date(event.date + "T" + event.time);
+    //     let diff = eventDate - now;
+
+    //     if (diff <= 0) {
+    //       countdownEl.innerText = `${event.title} is happening now!`;
+    //       clearInterval(timer);
+    //       return;
+    //     }
+
+    //     let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    //     let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    //     let minutes = Math.floor((diff / (1000 * 60)) % 60);
+    //     let seconds = Math.floor((diff / 1000) % 60);
+
+    //     document.getElementById("days").innerText = String(days).padStart(2, '0');
+    //     document.getElementById("hours").innerText = String(hours).padStart(2, '0');
+    //     document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
+
+    //     if (diff <= 0) {
+    //       document.querySelector(".countdown-box").innerHTML = `<p style="text-align:center;">${event.title} is happening now!</p>`;
+    //       clearInterval(timer);
+    //       return;
+    //     }
+
+    //   }
+
+    //   updateCountdown();
+    //   let timer = setInterval(updateCountdown, 1000);
+    // }
+    //     //Note----------------------------------------------------------------------------------------------------
+    //     //✅ 載入 notes 清單到首頁
+    //     document.addEventListener("DOMContentLoaded", function () {
+    //       loadHomeNotes();
+    //     });
+
+
+    //     // ❌ 完成後就從 localStorage 移除（而不是改 done）
+    //     function loadHomeNotes() {
+    //       console.log("載入中...");
+
+    //       let notes = JSON.parse(localStorage.getItem("notes")) || [];
+
+    //       // 過濾未完成 + 排序
+    //       let activeNotes = notes
+    //         .filter(note => !note.done)
+    //         .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    //       const homeList = document.getElementById('home-note-list');
+    //       homeList.innerHTML = "";
+
+    //       // 如果沒有未完成的筆記，顯示 All done!
+    //       if (activeNotes.length === 0) {
+    //         const li = document.createElement('li');
+    //         li.innerHTML = `<em style="color: #aaa;">All done! 🎉</em>`;
+    //         li.style.textAlign = "center";
+    //         li.style.padding = "8px";
+    //         homeList.appendChild(li);
+    //         return; // 不繼續往下執行
+    //       }
+
+    //       // 最多顯示前三項
+    //       let notesToShow = activeNotes.slice(0, 3);
+
+    //       notesToShow.forEach(note => {
+    //         const li = document.createElement('li');
+    //         li.className = 'note-item';
+    //         li.style.position = "relative";
+    //         li.style.cursor = "pointer";
+
+    //         li.innerHTML = `
+    //   <strong>${note.title}</strong><br>
+    //   <small style="color: #777;">Deadline：${note.date}</small>
+    //   <button class="done-btn" onclick="event.stopPropagation(); markNoteDone(${note.id})" style="
+    //     position: absolute;
+    //     top: 10px;
+    //     right: 10px;
+    //     background: #f7cdd0;
+    //     border: none;
+    //     font-size: 14px;
+    //     cursor: pointer;
+    //     color: white;
+    //     border-radius:8px;
+    //     padding:8px 12px;
+    //   ">Done</button>
+    // `;
+
+
+    //         // 點按鈕時標記完成並阻止事件冒泡（避免跳轉）
+    //         li.querySelector(".done-btn").addEventListener("click", (event) => {
+    //           event.stopPropagation();
+    //           markNoteDone(note.title);
+    //         });
+
+    //         // 點整個 li 跳轉
+    //         li.addEventListener("click", () => {
+    //           window.location.href = "note.html";
+    //         });
+
+    //         homeList.appendChild(li);
+    //       });
+
+    //       // 超過三項，顯示 +n more
+    //       if (activeNotes.length > 3) {
+    //         const extra = document.createElement('li');
+    //         extra.className = 'note-extra-count';
+    //         extra.innerHTML = `<small>+${activeNotes.length - 3} more</small>`;
+    //         extra.style.textAlign = "right";
+    //         extra.style.color = "#999";
+    //         homeList.appendChild(extra);
+    //       }
+    //     }
+
+    //     function markNoteDone(id) {
+    //       let notes = JSON.parse(localStorage.getItem("notes")) || [];
+
+    //       // 找到符合 id 的那筆筆記，把 done 設為 true
+    //       notes = notes.map(note => {
+    //         if (note.id === id) {
+    //           return { ...note, done: true };
+    //         }
+    //         return note;
+    //       });
+
+    //       localStorage.setItem("notes", JSON.stringify(notes));
+    //       loadHomeNotes(); // ✅ 更新畫面
+    //       renderTodaySchedule?.();
+    //     }
+    //     console.log("script 正常執行");
+
+
+
+    //mood------------------------------------------------------------------------------------
+    // 顯示現在時間，並每秒更新
+    function updateTime() {
+      const now = new Date();
+
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+
+      const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const weekday = dayNames[now.getDay()];
+
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+
+      document.getElementById('date').textContent = `${yyyy}/${mm}/${dd}`;
+      document.getElementById('weekday').textContent = weekday;
+      document.getElementById('time').textContent = `${hours}:${minutes}`;
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // // 點擊心情儲存
+    // document.getElementById('mood-options').addEventListener('click', e => {
+    //   if (e.target.dataset.mood) {
+    //     const mood = e.target.dataset.mood;
+    //     const now = new Date().toISOString();
+
+    //     // 取得現有紀錄
+    //     let moods = JSON.parse(localStorage.getItem('moods')) || [];
+    //     moods.push({ mood, time: now });
+    //     localStorage.setItem('moods', JSON.stringify(moods));
+
+    //     alert(`你選擇了心情：${mood}`);
+    //   }
+    // });
+
+    // // 歷史紀錄按鈕
+    // document.getElementById('show-history').addEventListener('click', () => {
+    //   window.location.href = "mood.html";
+    // });
+
+    //calendar__________________________________________________________________________
+    // document.addEventListener("DOMContentLoaded", function () {
+    //   renderMiniCalendar();
+    //   renderTodaySchedule();
+    // });
+
+    // function renderMiniCalendar() {
+    //   const calendarEl = document.getElementById("calendar-preview");
+    //   const now = new Date();
+    //   const year = now.getFullYear();
+    //   const month = now.getMonth();
+    //   const todayDate = now.getDate();
+
+    //   const firstDay = new Date(year, month, 1).getDay(); // 月初是星期幾
+    //   const daysInMonth = new Date(year, month + 1, 0).getDate(); // 當月天數
+
+    //   calendarEl.innerHTML = "";
+
+    //   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    //   weekdays.forEach(day => {
+    //     const div = document.createElement("div");
+    //     div.textContent = day;
+    //     div.style.fontWeight = "bold";
+    //     calendarEl.appendChild(div);
+    //   });
+
+    //   // 空格
+    //   for (let i = 0; i < firstDay; i++) {
+    //     calendarEl.appendChild(document.createElement("div"));
+    //   }
+
+    //   // 日期
+    //   for (let i = 1; i <= daysInMonth; i++) {
+    //     const div = document.createElement("div");
+    //     div.textContent = i;
+    //     div.className = "day";
+    //     if (i === todayDate) {
+    //       div.classList.add("today");
+    //     }
+    //     calendarEl.appendChild(div);
+    //   }
+    // }
+
+    // function renderTodaySchedule() {
+    //   const taskEl = document.getElementById("today-task");
+    //   const todayStr = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
+
+    //   const notes = JSON.parse(localStorage.getItem("notes")) || [];
+    //   const events = JSON.parse(localStorage.getItem("events")) || [];
+
+    //   // 找出今天的筆記與行程
+    //   const todayNotes = notes.filter(n => n.date === todayStr && !n.done);
+    //   const todayEvents = events.filter(e => e.date === todayStr);
+
+    //   const combined = [...todayNotes, ...todayEvents];
+
+    //   if (combined.length === 0) {
+    //     taskEl.textContent = "No tasks today 🎉";
+    //     return;
+    //   }
+
+    //   // 排序（先有 time 再無 time）
+    //   combined.sort((a, b) => {
+    //     if (a.time && b.time) return a.time.localeCompare(b.time);
+    //     if (a.time) return -1;
+    //     if (b.time) return 1;
+    //     return 0;
+    //   });
+
+    //   // 顯示一筆，+n
+    //   const main = combined[0];
+    //   // let html = main.time ? `${main.time} - ${main.title}` : main.title;
+
+    //   // if (combined.length > 1) {
+    //   //   html += ` <span style="color:#999; font-size:12px;">+${combined.length - 1}</span>`;
+    //   // }
+
+    //   const html = `
+    //   <div style="position: relative; text-align: center;">
+    //     <span>${main.time ? `${main.time} - ${main.title}` : main.title}</span>
+    //     ${combined.length > 1 ? `<span style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); color:#999; font-size:12px;">+${combined.length - 1}</span>` : ""}
+    //   </div>
+    // `;
+
+    //   taskEl.innerHTML = html;
+    // }
+
+  </script>
+
+  <script type="module">
+    //登入+note____________________________________________________________________________
+    import { auth, db } from './firebase-init.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { collection, query, where, orderBy, getDocs, updateDoc, doc, addDoc, serverTimestamp, getDoc, setDoc, deleteDoc, getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // 確保抓到最新的使用者資料
+        console.log('使用者名稱:', user.displayName); //
+        document.querySelector('.nav-buttons').innerHTML = `
+        <span>👋 ${user.displayName}</span>
+        <button id="logoutBtn">Log out</button>
+      `;
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+          signOut(auth).then(() => {
+            window.location.reload();
+          });
+        });
+
+        // 使用者登入後，載入該用戶的 notes
+        loadHomeNotes();
+      } else {
+        // 尚未登入，顯示登入按鈕或空白
+        document.querySelector('.nav-buttons').innerHTML = `
+        <button onclick="window.location.href='login.html'">Log in</button>
+        <button onclick="window.location.href='signup.html'">Sign up</button>
+      `;
+      }
+    });
+
+    // import { collection, query, where, orderBy, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    async function loadHomeNotes() {
+      const user = auth.currentUser;
+      if (!user) {
+        console.log("尚未登入");
+        return;
+      }
+
+      // const notesRef = collection(db, 'users', user.uid, 'notes');
+      const notesRef = collection(db, 'notes', user.uid, 'userNotes');
+      const q = query(notesRef, where('done', '==', false), orderBy('date'));
+      const querySnapshot = await getDocs(q);
+
+      const homeList = document.getElementById('home-note-list');
+      homeList.innerHTML = "";
+
+      if (querySnapshot.empty) {
+        const li = document.createElement('li');
+        li.innerHTML = `<em style="color: #aaa;">All done! 🎉</em>`;
+        li.style.textAlign = "center";
+        li.style.padding = "8px";
+        homeList.appendChild(li);
+        return;
+      }
+
+      let count = 0;
+      querySnapshot.forEach(docSnap => {
+        if (count >= 3) return;
+        const note = docSnap.data();
+        const li = document.createElement('li');
+        li.className = 'note-item';
+        li.style.position = "relative";
+        li.style.cursor = "pointer";
+
+        li.innerHTML = `
+        <strong>${note.title}</strong><br>
+        <small style="color: #777;">Deadline：${note.date}</small>
+        <button class="done-btn" style="
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: #f7cdd0;
+          border: none;
+          font-size: 12px;
+          cursor: pointer;
+          color: white;
+          border-radius:8px;
+          padding:8px 12px;
+        ">Done</button>
+      `;
+
+        li.querySelector(".done-btn").addEventListener("click", async (event) => {
+          event.stopPropagation();
+          await markNoteDone(docSnap.id);
+        });
+
+        li.addEventListener("click", () => {
+          window.location.href = "note.html";
+        });
+
+        homeList.appendChild(li);
+        count++;
+      });
+
+      if (querySnapshot.size > 3) {
+        const extra = document.createElement('li');
+        extra.className = 'note-extra-count';
+        extra.innerHTML = `<small>+${querySnapshot.size - 3} more</small>`;
+        extra.style.textAlign = "right";
+        extra.style.color = "#999";
+        homeList.appendChild(extra);
+      }
+    }
+
+    async function markNoteDone(noteId) {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      // const noteDocRef = doc(db, 'users', user.uid, 'notes', noteId);
+      const noteDocRef = doc(db, 'notes', user.uid, 'userNotes', noteId);
+      await updateDoc(noteDocRef, { done: true });
+      loadHomeNotes();
+      renderTodaySchedule(); // ✅ 更新今天的任務區
+    }
+
+    //event____________________________________________________________________________
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const eventTitleEl = document.getElementById('countdown-title');
+
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) return;
+
+      const userEventsRef = collection(db, "events", user.uid, "userEvents");
+      const snapshot = await getDocs(userEventsRef);
+
+      const now = new Date();
+      let upcomingEvent = null;
+      let minDiff = Infinity;
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const eventDateTime = new Date(`${data.date}T${data.time}`);
+
+        const diff = eventDateTime - now;
+        if (diff >= 0 && diff < minDiff) {
+          upcomingEvent = { ...data, id: docSnap.id };
+          minDiff = diff;
+        }
+
+        // 刪除過期
+        if (eventDateTime < now) {
+          deleteDoc(doc(db, "events", user.uid, "userEvents", docSnap.id));
+        }
+      });
+
+      if (upcomingEvent) {
+        eventTitleEl.innerText = "NEXT: " + upcomingEvent.title;
+        startCountdown(`${upcomingEvent.date}T${upcomingEvent.time}`, async () => {
+          await deleteDoc(doc(db, "events", user.uid, "userEvents", upcomingEvent.id));
+          eventTitleEl.innerText = "Not event yet";
+          daysEl.textContent = hoursEl.textContent = minutesEl.textContent = '00';
+        });
+      } else {
+        eventTitleEl.innerText = "Not event yet";
+      }
+    });
+
+    function startCountdown(targetTime, onExpire) {
+      const target = new Date(targetTime);
+
+      const timer = setInterval(() => {
+        const now = new Date();
+        const diff = target - now;
+
+        if (diff <= 0) {
+          clearInterval(timer);
+          onExpire();
+          return;
+        }
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const m = Math.floor((diff / (1000 * 60)) % 60);
+
+        daysEl.textContent = d.toString().padStart(2, '0');
+        hoursEl.textContent = h.toString().padStart(2, '0');
+        minutesEl.textContent = m.toString().padStart(2, '0');
+      }, 1000);
+    }
+    //calendar___________________________________________________________________
+    // import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+    document.addEventListener("DOMContentLoaded", function () {
+      renderMiniCalendar();
+      renderTodaySchedule();
+    });
+    // 等登入狀態確認後再執行 renderTodaySchedule
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        renderTodaySchedule();
+      } else {
+        const taskEl = document.getElementById("today-task");
+        taskEl.textContent = "請先登入";
+      }
+    });
+
+    function renderMiniCalendar() {
+      const calendarEl = document.getElementById("calendar-preview");
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const todayDate = now.getDate();
+
+      const firstDay = new Date(year, month, 1).getDay(); // 月初是星期幾
+      const daysInMonth = new Date(year, month + 1, 0).getDate(); // 當月天數
+
+      calendarEl.innerHTML = "";
+
+      const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      weekdays.forEach(day => {
+        const div = document.createElement("div");
+        div.textContent = day;
+        div.style.fontWeight = "bold";
+        calendarEl.appendChild(div);
+      });
+
+      // 空格
+      for (let i = 0; i < firstDay; i++) {
+        calendarEl.appendChild(document.createElement("div"));
+      }
+
+      // 日期
+      for (let i = 1; i <= daysInMonth; i++) {
+        const div = document.createElement("div");
+        div.textContent = i;
+        div.className = "day";
+        if (i === todayDate) {
+          div.classList.add("today");
+        }
+        calendarEl.appendChild(div);
+      }
+    }
+    async function renderTodaySchedule() {
+      const taskEl = document.getElementById("today-task");
+      // const todayStr = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
+      const todayStr = getLocalDateStr();
+
+      const user = auth.currentUser;
+      if (!user) {
+        taskEl.textContent = "請先登入";
+        return;
+      }
+
+      try {
+        // 取得 notes
+        const notesRef = collection(db, "notes", user.uid, "userNotes");
+        const notesSnap = await getDocs(notesRef);
+        const notes = [];
+        notesSnap.forEach(doc => {
+          const data = doc.data();
+          if (data.date === todayStr && !data.done) {
+            notes.push(data);
+          }
+        });
+
+        // 取得 events
+        const eventsRef = collection(db, "events", user.uid, "userEvents");
+        const eventsSnap = await getDocs(eventsRef);
+        const events = [];
+        eventsSnap.forEach(doc => {
+          const data = doc.data();
+          if (data.date === todayStr) {
+            events.push(data);
+          }
+        });
+
+        const combined = [...notes, ...events];
+
+        if (combined.length === 0) {
+          taskEl.textContent = "No tasks today 🎉";
+          return;
+        }
+
+        // 排序（先有 time 再無 time）
+        combined.sort((a, b) => {
+          if (a.time && b.time) return a.time.localeCompare(b.time);
+          if (a.time) return -1;
+          if (b.time) return 1;
+          return 0;
+        });
+
+        const main = combined[0];
+
+        const html = `
+      <div style="position: relative; text-align: center;">
+        <span>${main.time ? `${main.time} - ${main.title}` : main.title}</span>
+        ${combined.length > 1 ? `<span style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); color:#999; font-size:12px;">+${combined.length - 1}</span>` : ""}
+      </div>
+    `;
+
+        taskEl.innerHTML = html;
+      } catch (err) {
+        console.error("讀取 Firebase 資料錯誤：", err);
+        taskEl.textContent = "載入失敗";
+      }
+    }
+
+    function getLocalDateStr() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = (now.getMonth() + 1).toString().padStart(2, "0");
+      const day = now.getDate().toString().padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+    //mood_______________________________________________________________________
+    // import { doc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    document.getElementById('mood-options').addEventListener('click', async e => {
+      if (e.target.dataset.mood) {
+        const mood = e.target.dataset.mood;
+        const user = auth.currentUser;
+
+        if (!user) {
+          alert("請先登入才能紀錄心情");
+          return;
+        }
+
+        try {
+          const userDocRef = doc(db, "moods", user.uid);
+          const userMoodsColRef = collection(userDocRef, "userMoods");
+          await addDoc(userMoodsColRef, {
+            mood: mood,
+            time: serverTimestamp(),
+          });
+          alert(`你選擇了心情：${mood}`);
+        } catch (error) {
+          console.error("儲存心情錯誤：", error);
+          alert("儲存心情失敗，請稍後再試");
+        }
+      }
+    });
+    // 歷史紀錄按鈕
+    document.getElementById('show-history').addEventListener('click', () => {
+      window.location.href = "mood.html";
+    });
+    //Timeline_______________________________________________________________________
+
+    // const timeline = document.getElementById("timeline");
+
+    // auth.onAuthStateChanged(async user => {
+    //   if (!user) {
+    //     timeline.innerHTML = "<p style='color:#999;'>請先登入以查看行程</p>";
+    //     return;
+    //   }
+
+    //   const todayStr = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
+
+    //   // 抓今日的 daily plan
+    //   const planDocRef = doc(db, "dailyPlans", user.uid, "plans", todayStr);
+    //   const planSnap = await getDoc(planDocRef);
+
+    //   let items = [];
+
+    //   if (planSnap.exists()) {
+    //     items = planSnap.data().items || [];
+    //   }
+
+    //   // 加入今日的 event（假設你有用 "events/{uid}/userEvents"）
+    //   const eventSnapshot = await getDocs(collection(db, "events", user.uid, "userEvents"));
+    //   const today = new Date();
+    //   eventSnapshot.forEach(doc => {
+    //     const data = doc.data();
+    //     const eventDate = new Date(data.date); // 假設 date 是 timestamp
+    //     if (eventDate.toDateString() === today.toDateString()) {
+    //       items.push({ title: data.title, time: data.time }); // 假設有 time 欄位
+    //     }
+    //   });
+
+    //   // 按時間排序
+    //   items.sort((a, b) => a.time.localeCompare(b.time));
+
+    //   // 顯示在 timeline 裡
+    //   timeline.innerHTML = "";
+    //   items.forEach(item => {
+    //     const block = document.createElement("div");
+    //     block.style = "min-width: 120px; margin-right: 10px; padding: 10px; background: #ffe5f2; border-radius: 10px; text-align: center;";
+    //     block.innerHTML = `<strong>${item.time}</strong><br>${item.title}`;
+    //     timeline.appendChild(block);
+    //   });
+
+    //   if (items.length === 0) {
+    //     timeline.innerHTML = "<p style='color:#999;'>尚未規劃今日行程</p>";
+    //   }
+    // });
+
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadTodayTimeline(user);
+      }
+    });
+
+    async function loadTodayTimeline(user) {
+      const today = new Date().toISOString().slice(0, 10);
+
+      const plansQ = query(
+        collection(db, "plans", user.uid, "dailyPlans"),
+        where("date", "==", today)
+      );
+      const eventsQ = query(
+        collection(db, "events", user.uid, "userEvents"),
+        where("date", "==", today)
+      );
+
+      try {
+        const [plansSnap, eventsSnap] = await Promise.all([
+          getDocs(plansQ),
+          getDocs(eventsQ)
+        ]);
+
+        const plans = plansSnap.docs.map(doc => doc.data());
+        const events = eventsSnap.docs.map(doc => ({
+          time: doc.data().time,
+          title: doc.data().title
+        }));
+
+        // const allItems = [...plans, ...events];
+        // allItems.sort((a, b) => convertTo24Hour(a.time).localeCompare(convertTo24Hour(b.time)));
+        console.log("📌 plans:", plans);
+        console.log("📌 events:", events);
+
+        const allItems = [...plans, ...events];
+        console.log("📌 合併後 allItems:", allItems);
+
+        allItems.forEach((item, idx) => {
+          if (!item || typeof item !== 'object') {
+            console.warn(`⚠️ 第 ${idx} 筆是 null 或 undefined：`, item);
+          } else if (!item.time || typeof item.time !== 'string') {
+            console.warn(`⚠️ 第 ${idx} 筆缺少有效 time：`, item);
+          }
+        });
+
+        allItems.sort((a, b) => convertTo24Hour(a.time).localeCompare(convertTo24Hour(b.time)));
+
+        drawTimelinePoints(allItems);
+      } catch (error) {
+        console.error("載入每日時間線失敗：", error);
+      }
+    }
+
+    // function drawTimelinePoints(plansAndEvents) {
+    // const timelineBar = document.getElementById('timeline-bar');
+    // timelineBar.innerHTML = ''; // 清空
+
+    // const startHour = 6;
+    // const endHour = 22;
+    // const totalHours = endHour - startHour;
+
+    // plansAndEvents.forEach(item => {
+    //   const [hourStr, minStr] = convertTo24Hour(item.time).split(':');
+    //   const hour = parseInt(hourStr);
+    //   const minute = parseInt(minStr);
+
+    //   const posPercent = ((hour + minute / 60) - startHour) / totalHours * 100;
+
+    //   const container = document.createElement('div');
+    //   container.style.position = 'absolute';
+    //   container.style.left = `calc(${posPercent}% - 20px)`;
+    //   container.style.top = '0';
+    //   container.style.width = '40px';
+    //   container.style.textAlign = 'center';
+
+    //   // 時間標籤（上方）
+    //   const timeLabel = document.createElement('div');
+    //   timeLabel.textContent = item.time;
+    //   timeLabel.style.fontSize = '12px';
+    //   timeLabel.style.color = '#555';
+    //   timeLabel.style.marginBottom = '4px';
+
+    //   // 圓點
+    //   const point = document.createElement('div');
+    //   point.style.width = '16px';
+    //   point.style.height = '16px';
+    //   point.style.margin = '0 auto';
+    //   point.style.borderRadius = '50%';
+    //   point.style.backgroundColor = '#ff90b3';
+    //   point.style.boxShadow = '0 0 6px rgba(255, 144, 179, 0.7)';
+    //   point.title = item.title;
+
+    //   // 標題（下方）
+    //   const titleLabel = document.createElement('div');
+    //   titleLabel.textContent = item.title;
+    //   titleLabel.style.fontSize = '12px';
+    //   titleLabel.style.color = '#663399';
+    //   titleLabel.style.marginTop = '4px';
+    //   titleLabel.style.whiteSpace = 'nowrap';
+
+    //   container.appendChild(timeLabel);
+    //   container.appendChild(point);
+    //   container.appendChild(titleLabel);
+    //   timelineBar.appendChild(container);
+    // });
+    // }
+
+    function drawTimelinePoints(items) {
+      const timelineBar = document.getElementById("timeline-bar");
+      timelineBar.innerHTML = ''; // 清空
+
+      items.forEach(item => {
+        const point = document.createElement("div");
+        point.className = "timeline-point";
+
+        const timeLabel = document.createElement("div");
+        timeLabel.className = "time";
+        timeLabel.textContent = item.time;
+
+        const dot = document.createElement("div");
+        dot.className = "dot";
+
+        const titleLabel = document.createElement("div");
+        titleLabel.className = "title";
+        titleLabel.textContent = item.title;
+
+        point.appendChild(timeLabel);
+        point.appendChild(dot);
+        point.appendChild(titleLabel);
+        timelineBar.appendChild(point);
+      });
+    }
+
+    function convertTo24Hour(timeStr) {
+      if (!timeStr || typeof timeStr !== 'string') {
+        console.warn("⛔️ 無效時間格式：", timeStr);
+        return '00:00';
+      }
+
+      // 如果是 24 小時制格式，直接回傳
+      if (/^\d{2}:\d{2}$/.test(timeStr)) {
+        return timeStr;
+      }
+
+      // 否則處理上午/下午格式
+      const [ampm, time] = timeStr.split(' ');
+      if (!ampm || !time) return '00:00';
+
+      let [hours, minutes] = time.split(':').map(Number);
+      if (ampm === '下午' && hours < 12) hours += 12;
+      if (ampm === '上午' && hours === 12) hours = 0;
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    }
+
+
+
+  </script>
+
+
+
+</body>
+
+</html>

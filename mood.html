@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+
+  <style>
+    /* 背景和字體 */
+    body {
+      background: #fff0fb;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #dfbdbf;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 容器 */
+    .container {
+      max-width: 400px;
+      margin: 30px auto;
+      padding: 25px 30px;
+      background: white;
+      border-radius: 18px;
+      /* box-shadow: 0 4px 15px rgba(255, 153, 204, 0.4); */
+      text-align: center;
+    }
+
+    /* 標題 */
+    h2 {
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #dda1b8;
+      font-size: 1.8rem;
+    }
+
+    /* 清單 */
+    ul#history-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 25px 0;
+      max-height: 320px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #dfbdbf transparent;
+    }
+
+    /* 滾動條樣式（Chrome/Edge/Safari） */
+    ul#history-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ul#history-list::-webkit-scrollbar-thumb {
+      background-color: #dfbdbf;
+      border-radius: 10px;
+    }
+
+    /* 列表項目 */
+    ul#history-list li {
+      padding: 10px 15px;
+      margin-bottom: 12px;
+      background: #f3e5e8;
+      border-radius: 12px;
+      font-size: 1rem;
+      color: #545353;
+      box-shadow: inset 0 2px 5px #dbd3d5;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+
+    ul#history-list li:hover {
+      background: #dfbdbf;
+      cursor: default;
+    }
+
+    /* 返回按鈕 */
+    button {
+      background: #dfbdbf;
+      color: white;
+      border: none;
+      padding: 10px 26px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      /* box-shadow: 0 5px 12px rgba(255, 153, 204, 0.5); */
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      background: #dda1b8;
+      /* box-shadow: 0 8px 18px rgba(255, 153, 204, 0.7); */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Mood History</h2>
+    <ul id="history-list">
+      <!-- JS 動態插入歷史心情 -->
+    </ul>
+    <button onclick="window.history.back()">返回</button>
+  </div>
+</body>
+<!-- <div style="max-width: 400px; margin: 20px auto; padding: 20px;">
+  <h2>Mood History</h2>
+  <ul id="history-list" style="list-style: none; padding: 0;"></ul>
+  <button onclick="window.history.back()"
+    style="margin-top: 15px; background: #7a5cff; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">返回</button>
+</div> -->
+
+<!-- <script>
+  function loadHistory() {
+    let moods = JSON.parse(localStorage.getItem('moods')) || [];
+    const ul = document.getElementById('history-list');
+    ul.innerHTML = "";
+
+    if (moods.length === 0) {
+      ul.innerHTML = "<li style='color:#999;'>尚無紀錄</li>";
+      return;
+    }
+
+    moods.reverse().forEach(entry => {
+      const li = document.createElement('li');
+      li.style.padding = "8px 0";
+      li.textContent = `${new Date(entry.time).toLocaleString()} — 心情：${entry.mood}`;
+      ul.appendChild(li);
+    });
+  }
+
+  loadHistory();
+</script> -->
+
+<script type="module">
+  import { auth, db } from './firebase-init.js';
+  import { doc, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  console.log('db', db);  // 你可以測試是否是 Firestore 實例
+
+  const ul = document.getElementById('history-list');
+
+  async function loadHistory() {
+    const user = auth.currentUser;
+    if (!user) {
+      ul.innerHTML = "<li style='color:#999;'>請先登入才能查看歷史紀錄</li>";
+      return;
+    }
+
+    try {
+      const userDocRef = doc(db, "moods", user.uid);
+      const userMoodsColRef = collection(userDocRef, "userMoods");
+      const q = query(userMoodsColRef, orderBy("time", "desc"));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        ul.innerHTML = "<li style='color:#999;'>尚無紀錄</li>";
+        return;
+      }
+
+      ul.innerHTML = "";
+      querySnapshot.forEach(doc => {
+        const data = doc.data();
+        const li = document.createElement('li');
+        li.style.padding = "8px 0";
+        const time = data.time?.toDate ? data.time.toDate() : new Date();
+        li.textContent = `${time.toLocaleString()} — 心情：${data.mood}`;
+        ul.appendChild(li);
+      });
+    } catch (error) {
+      console.error("讀取心情歷史錯誤", error);
+      ul.innerHTML = "<li style='color:#999;'>讀取歷史紀錄失敗</li>";
+    }
+  }
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      loadHistory();
+    } else {
+      ul.innerHTML = "<li style='color:#999;'>請先登入才能查看歷史紀錄</li>";
+    }
+  });
+
+</script>

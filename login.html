@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Login | DeadlineDog</title>
+  <style>
+    body {
+      background-color: #f8e9ef;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      width: 320px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #d27d9b;
+      margin-bottom: 30px;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 2px solid #f2c1d1;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    button {
+      width: 95%;
+      padding: 10px;
+      background-color: #d27d9b;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .small-text {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #777;
+    }
+
+    .small-text a {
+      color: #d27d9b;
+      text-decoration: none;
+      margin-left: 5px;
+    }
+
+    /* 叉叉按鈕 */
+    .close-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 30px;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .close-button:hover {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Login</h1>
+    <form action="#">
+      <input type="email" placeholder="Email" required><br>
+      <input type="password" placeholder="Password" required><br>
+      <button type="submit">登入</button>
+    </form>
+    <div class="small-text">
+      <a href="#">忘記密碼？</a>
+    </div>
+    <div class="small-text">
+      沒有帳號嗎？<a href="signup.html">去註冊</a>
+    </div>
+    <!-- 叉叉按鈕 -->
+    <div class="close-button" onclick="window.location.href='index.html'">×</div>
+  </div>
+
+  <script type="module">
+    import { auth } from './firebase-init.js';
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    document.querySelector('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.querySelector('input[type="email"]').value;
+      const password = document.querySelector('input[type="password"]').value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          alert('登入成功！');
+          window.location.href = 'index.html';
+        })
+        .catch((error) => {
+          alert('登入失敗：' + error.message);
+        });
+    });
+  </script>
+
+
+</body>
+
+</html>
